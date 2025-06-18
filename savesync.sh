@@ -124,33 +124,33 @@ if [[ $syncmods -eq 1 ]]; then
 fi
 
 # copy saves
-if [ ! -d "$appdata/1" ]; then
+if [ -d $appdata/1 ]; then
     cp -r $appdata/1 $tmpdir/
-    if [ ! -d "$appdata/2" ]; then
+    if [ -d $appdata/2 ]; then
         cp -r $appdata/2 $tmpdir/
-        if [ ! -d "$appdata/3" ]; then
+        if [ -d $appdata/3 ]; then
             cp -r $appdata/3 $tmpdir/
         fi
     fi
 fi
 
 #copy cryptid saves
-if [ ! -d "$appdata/M1" ]; then
+if [ -d $appdata/M1 ]; then
     cp -r $appdata/M1 $tmpdir/
-    if [ ! -d "$appdata/M2" ]; then
+    if [ -d $appdata/M2 ]; then
         cp -r $appdata/M2 $tmpdir/
-        if [ ! -d "$appdata/M3" ]; then
+        if [ -d $appdata/M3 ]; then
             cp -r $appdata/M3 $tmpdir/
         fi
     fi
 fi
 
 #copy polterworxx saves
-if [ ! -d "$appdata/J1" ]; then
+if [ -d $appdata/J1 ]; then
     cp -r $appdata/J1 $tmpdir/
-    if [ ! -d "$appdata/J2" ]; then
+    if [ -d $appdata/J2 ]; then
         cp -r $appdata/J2 $tmpdir/
-        if [ ! -d "$appdata/J3" ]; then
+        if [ -d $appdata/J3 ]; then
             cp -r $appdata/J3 $tmpdir/
         fi
     fi
