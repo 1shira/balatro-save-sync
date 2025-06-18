@@ -65,7 +65,7 @@ if [[ $frommobile -eq 1 ]]; then
         exit 1
     fi
 
-    tar -cvf $tmpdir/balatro.tar.gz -C $tmpdir
+    tar -xvf $tmpdir/balatro.tar.gz -C $tmpdir
     rm $tmpdir/balatro.tar.gz
     if [[ $syncmods -eq 1 ]]; then
         # these have output supressed since they can error if no such save is present
