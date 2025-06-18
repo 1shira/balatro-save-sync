@@ -28,17 +28,65 @@ while true; do
 done
 
 if [[ $frommobile -eq 1 ]]; then
-    echo "unimplemented"
-    exit 0
     if [[ $syncmods -eq 1 ]]; then
         while true; do
-            read -p "config file says to sync mods, however syncing mods from mobile is not supported, only sync saves? (y/n) " yn
+            read -p "config file says to sync mods, however syncing mods from mobile is not recommended and WILL overwrite desktop saves and mods, sync anyways? (y/n) " yn
             case $yn in
             [Yy]*) break ;;
-            [Nn]*) exit 0 ;;
+            [Nn]*)
+                syncmods=0
+                break
+                ;;
             *) echo "anwer y or n" ;;
             esac
         done
+    fi
+
+    runas="run-as $androidapp"
+    if [[ $externaldir -eq 0 ]]; then
+        runas=
+    fi
+
+    if
+        adb shell $runas tar -cvf /data/local/tmp/balatro.tar.gz -C $androidsaves .
+        [ ! "$?" -eq 0 ]
+    then
+        rm -rf $tmpdir
+        echo "adb error, see above"
+        exit 1
+    fi
+
+    if
+        adb pull /data/local/tmp/balatro.tar.gz $tmpdir
+        [ ! "$?" -eq 0 ]
+    then
+        rm -rf $tmpdir
+        echo "adb error, see above"
+        exit 1
+    fi
+
+    tar -cvf $tmpdir/balatro.tar.gz -C $tmpdir
+    rm $tmpdir/balatro.tar.gz
+    if [[ $syncmods -eq 1 ]]; then
+        # these have output supressed since they can error if no such save is present
+        # 1-3 is notmal saves M1-3 is cryptid saves J1-3 is polterworxx saves
+        rm -rf $appdata/[1-3] >/dev/null 2>&1
+        rm -rf $appdata/M[1-3] >/dev/null 2>&1
+        rm -rf $appdata/J[1-3] >/dev/null 2>&1
+        rm -rf $appdata/Mods >/dev/null 2>&1
+        cp -r $tmpdir/[1-3] $appdata >/dev/null 2>&1
+        cp -r $tmpdir/M[1-3] $appdata >/dev/null 2>&1
+        cp -r $tmpdir/J[1-3] $appdata >/dev/null 2>&1
+        cp -r $tmpdir/Mods $appdata >/dev/null 2>&1
+    else
+        # these have output supressed since they can error if no such save is present
+        # 1-3 is notmal saves M1-3 is cryptid saves J1-3 is polterworxx saves
+        rm -rf $appdata/[1-3] >/dev/null 2>&1
+        rm -rf $appdata/M[1-3] >/dev/null 2>&1
+        rm -rf $appdata/J[1-3] >/dev/null 2>&1
+        cp -r $tmpdir/[1-3] $appdata >/dev/null 2>&1
+        cp -r $tmpdir/M[1-3] $appdata >/dev/null 2>&1
+        cp -r $tmpdir/J[1-3] $appdata >/dev/null 2>&1
     fi
 
     exit 0
@@ -97,7 +145,7 @@ if [ ! -d "$appdata/M1" ]; then
     fi
 fi
 
-#copy bolterworx saves
+#copy polterworxx saves
 if [ ! -d "$appdata/J1" ]; then
     cp -r $appdata/J1 $tmpdir/
     if [ ! -d "$appdata/J2" ]; then
@@ -163,3 +211,5 @@ fi
 rm -rf $tmpdir
 
 echo "successfully synced."
+
+exit 0
