@@ -43,10 +43,11 @@ if [[ $frommobile -eq 1 ]]; then
     fi
 
     runas="run-as $androidapp"
-    if [[ $externaldir -eq 0 ]]; then
+    if [[ $isexternal -eq 1 ]]; then
         runas=
     fi
 
+    echo "pulling files"
     if
         adb shell $runas tar -cvf /data/local/tmp/balatro.tar.gz -C $androidsaves .
         [ ! "$?" -eq 0 ]
@@ -70,23 +71,30 @@ if [[ $frommobile -eq 1 ]]; then
     if [[ $syncmods -eq 1 ]]; then
         # these have output supressed since they can error if no such save is present
         # 1-3 is notmal saves M1-3 is cryptid saves J1-3 is polterworxx saves
-        rm -rf $appdata/[1-3] >/dev/null 2>&1
-        rm -rf $appdata/M[1-3] >/dev/null 2>&1
-        rm -rf $appdata/J[1-3] >/dev/null 2>&1
-        rm -rf $appdata/Mods >/dev/null 2>&1
-        cp -r $tmpdir/[1-3] $appdata >/dev/null 2>&1
-        cp -r $tmpdir/M[1-3] $appdata >/dev/null 2>&1
-        cp -r $tmpdir/J[1-3] $appdata >/dev/null 2>&1
-        cp -r $tmpdir/Mods $appdata >/dev/null 2>&1
+        echo "delting files"
+        rm -rf $appdata/[1-3]
+        rm -rf $appdata/M[1-3]
+        rm -rf $appdata/J[1-3]
+        rm -rf $appdata/Mods
+
+        echo "copying files"
+        cp -r $tmpdir/[1-3] $appdata
+        cp -r $tmpdir/M[1-3] $appdata
+        cp -r $tmpdir/J[1-3] $appdata
+        cp -r $tmpdir/Mods $appdata
     else
         # these have output supressed since they can error if no such save is present
         # 1-3 is notmal saves M1-3 is cryptid saves J1-3 is polterworxx saves
-        rm -rf $appdata/[1-3] >/dev/null 2>&1
-        rm -rf $appdata/M[1-3] >/dev/null 2>&1
-        rm -rf $appdata/J[1-3] >/dev/null 2>&1
-        cp -r $tmpdir/[1-3] $appdata >/dev/null 2>&1
-        cp -r $tmpdir/M[1-3] $appdata >/dev/null 2>&1
-        cp -r $tmpdir/J[1-3] $appdata >/dev/null 2>&1
+
+        echo "deleting saves"
+        rm -rf $appdata/[1-3]
+        rm -rf $appdata/M[1-3]
+        rm -rf $appdata/J[1-3]
+
+        echo "copying saves"
+        cp -r $tmpdir/[1-3] $appdata
+        cp -r $tmpdir/M[1-3] $appdata
+        cp -r $tmpdir/J[1-3] $appdata
     fi
 
     exit 0
@@ -163,10 +171,11 @@ fi
 tar -cvf $tmpdir/balatro.tar.gz --exclude=.git -C $tmpdir . >>/dev/null 2>&1
 
 runas="run-as $androidapp"
-if [[ $externaldir -eq 0 ]]; then
+if [[ $isexternal -eq 1 ]]; then
     runas=
 fi
 
+echo "deleting files"
 if
     adb shell $runas find $androidsaves ! -path $androidsaves/settings.jkr ! -path $androidsaves/config ! -path $androidsaves/config/*
     [ ! "$?" -eq 0 ]
@@ -176,6 +185,7 @@ then
     exit 1
 fi
 
+echo "pushing files"
 if
     adb push $tmpdir/balatro.tar.gz /data/local/tmp
     [ ! "$?" -eq 0 ]
