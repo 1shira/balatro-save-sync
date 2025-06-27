@@ -168,7 +168,7 @@ if [[ $externaldir -eq 0 ]]; then
 fi
 
 if
-    adb shell $runas rm -rf $androidsaves/*
+    adb shell $runas find $androidsaves ! -path $androidsaves/settings.jkr ! -path $androidsaves/config ! -path $androidsaves/config/*
     [ ! "$?" -eq 0 ]
 then
     rm -rf $tmpdir
