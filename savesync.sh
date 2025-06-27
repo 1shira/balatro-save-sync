@@ -47,7 +47,7 @@ if [[ $frommobile -eq 1 ]]; then
         runas=
     fi
 
-    echo "pulling files"
+    echo "selecting files... "
     if
         adb shell $runas tar -cvf /data/local/tmp/balatro.tar.gz -C $androidsaves .
         [ ! "$?" -eq 0 ]
@@ -56,7 +56,8 @@ if [[ $frommobile -eq 1 ]]; then
         echo "adb error, see above"
         exit 1
     fi
-
+    
+    echo "pulling files... "
     if
         adb pull /data/local/tmp/balatro.tar.gz $tmpdir
         [ ! "$?" -eq 0 ]
@@ -71,13 +72,13 @@ if [[ $frommobile -eq 1 ]]; then
     if [[ $syncmods -eq 1 ]]; then
         # these have output supressed since they can error if no such save is present
         # 1-3 is notmal saves M1-3 is cryptid saves J1-3 is polterworxx saves
-        echo "delting files"
+        echo "delting files... "
         rm -rf $appdata/[1-3]
         rm -rf $appdata/M[1-3]
         rm -rf $appdata/J[1-3]
         rm -rf $appdata/Mods
 
-        echo "copying files"
+        echo "copying files... "
         cp -r $tmpdir/[1-3] $appdata
         cp -r $tmpdir/M[1-3] $appdata
         cp -r $tmpdir/J[1-3] $appdata
@@ -102,6 +103,7 @@ fi
 
 if [[ $syncmods -eq 1 ]]; then
 
+    echo "selecting mods... "
     # this folder has the lovely-modified gamefiles, these are needed to run mods.
     if [ ! -d "$appdata/Mods/lovely/dump" ]; then
         echo -e "$appdata/Mods/lovely/dump not found, is the path correct?\nHave you started the game once?"
@@ -131,6 +133,7 @@ if [[ $syncmods -eq 1 ]]; then
 
 fi
 
+echo "selecting saves..."
 # copy saves
 if [ -d $appdata/1 ]; then
     cp -r $appdata/1 $tmpdir/
@@ -175,7 +178,7 @@ if [[ $isexternal -eq 1 ]]; then
     runas=
 fi
 
-echo "deleting files"
+echo "deleting files... "
 if
     adb shell $runas find $androidsaves ! -path $androidsaves/settings.jkr ! -path $androidsaves/config ! -path $androidsaves/config/*
     [ ! "$?" -eq 0 ]
@@ -185,7 +188,7 @@ then
     exit 1
 fi
 
-echo "pushing files"
+echo "pushing files... "
 if
     adb push $tmpdir/balatro.tar.gz /data/local/tmp
     [ ! "$?" -eq 0 ]
