@@ -180,7 +180,8 @@ fi
 
 echo "deleting files... "
 if
-    adb shell $runas find $androidsaves ! -path $androidsaves/settings.jkr ! -path $androidsaves/config ! -path $androidsaves/config/*
+    # the double " (once escaped) are a casae of 2 shells, the first non-escaped ones get removed during this script being interpreted, the second escaped ones get removed by adb shell on the phone, all just to pass it as a string
+    adb shell $runas find $androidsaves ! -path $androidsaves/settings.jkr ! -path $androidsaves/config ! -path $androidsaves"\"/config/*\""
     [ ! "$?" -eq 0 ]
 then
     rm -rf $tmpdir
